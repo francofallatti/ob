@@ -1,5 +1,6 @@
-package com.example.obrestdatajpa;
+package com.example.obrestdatajpa.repository;
 
+import com.example.obrestdatajpa.entities.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
