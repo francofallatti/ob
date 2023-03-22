@@ -1,21 +1,27 @@
 package com.example.obrestdatajpa.entities;
 
-import jakarta.persistence.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import javax.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "books")
+@ApiModel("Entidad libro")
 public class Book {
 
     //atributos
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty("Clave primaria autoincremental tipo Long")
     private Long id;
     private String title;
     private String author;
     private Integer pages;
+    @ApiModelProperty("Precio en dolares")
     private Double price;
     private LocalDate releapseDate;
     private  Boolean online;

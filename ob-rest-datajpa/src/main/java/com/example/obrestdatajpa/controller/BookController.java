@@ -2,12 +2,15 @@ package com.example.obrestdatajpa.controller;
 
 import com.example.obrestdatajpa.entities.Book;
 import com.example.obrestdatajpa.repository.BookRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +35,8 @@ public class BookController {
 
     //findById
     @GetMapping("/api/books/{id}")
-    public ResponseEntity<Book> findOneById(@PathVariable Long id) {
+    @ApiOperation("Buscar un libro por clave primaria")//añado descripcion de que hace el metodo
+    public ResponseEntity<Book> findOneById(@ApiParam("Clave primaria tipo Long") @PathVariable Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
 
 //        opcion1:
@@ -94,6 +98,7 @@ public class BookController {
     }
 
     //Dellete all
+    @ApiIgnore //ignorar este método para que no aparezca en la documentación de la api Swagger
     @DeleteMapping("/api/books")
     public  ResponseEntity<Book> deleteAll(){
         log.info("REST Request for delete all books");
