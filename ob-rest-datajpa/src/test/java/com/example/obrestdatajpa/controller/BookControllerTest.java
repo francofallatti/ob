@@ -1,14 +1,19 @@
 package com.example.obrestdatajpa.controller;
 
+import com.example.obrestdatajpa.entities.Book;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +34,7 @@ class BookControllerTest {
         testRestTemplate = new TestRestTemplate(restTemplateBuilder);
     }
 
+    @DisplayName("Comprobar hola mundo desde controladores Spring REST")
     @Test
     void hello(){
         ResponseEntity<String> response = testRestTemplate.getForEntity("/hola",String.class);
@@ -40,13 +46,43 @@ class BookControllerTest {
 
     @Test
     void findAll() {
+        ResponseEntity<Book[]> responseEntity = testRestTemplate.getForEntity("/api/books", Book[].class);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(200, responseEntity.getStatusCodeValue());
+
+        List<Book> books = Arrays.asList(responseEntity.getBody());
+        assertEquals(0,books);
     }
 
     @Test
     void findOneById() {
+        ResponseEntity<Book> responseEntity = testRestTemplate.getForEntity("/api/books", Book.class);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
     void create() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        String json = """
+                 {
+                        "title": "Harry Potter y la piedra filosofal",
+                        "author": "J.K. Rowling",
+                        "pages": 320,
+                        "price": 39.99,
+                        "releapseDate": "1997-06-26",
+                        "online": true
+                    }
+                """;
+
+        HttpEntity<String> request = new HttpEntity<>(json,headers);
+        ResponseEntity<Book> response = testRestTemplate.exchange("/api/books", HttpMethod.POST, request, Book.class);
+
+        Book result = response.getBody();
+
+        assertEquals(1L, result.getId());
+        assertEquals("Harry Potter y la piedra filosofal", result.getTitle());
     }
 }
