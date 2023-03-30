@@ -17,13 +17,22 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//Manera más sencilla de tester controladores
+//webEnvironment -> indicar que le asigne un puerto aleatorio
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookControllerTest {
 
+    //Sirve para poder hacer las peticiones http
+    //Alternativa a restTemplate que sirve para testing
     private TestRestTemplate testRestTemplate;
 
+    //Sirve para construir TestRestTemplate
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
+
+    //Le decimos a Spring que inyecte un builder (RestTemplateBuilder) el cual usamos para generar el objeto
+    // TestRestTemplate y asi poder lanzar las peticiones http vinculadas a la web con el puerto
+    // SpringBootTest.WebEnvironment.RANDOM_PORT
 
     @LocalServerPort
     private int port;
@@ -46,7 +55,9 @@ class BookControllerTest {
 
     @Test
     void findAll() {
+        //testRestTemplate.getForEntity -> realiza peticion get que devuelve una lista de entidades book
         ResponseEntity<Book[]> responseEntity = testRestTemplate.getForEntity("/api/books", Book[].class);
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(200, responseEntity.getStatusCodeValue());
 
@@ -61,8 +72,10 @@ class BookControllerTest {
     }
 
     @Test
-    void create() {
+    void create() { //preparar cabecera, preparar json, preparar petición y ejecutar petición a traves del metodo POST
+        //cabecera para enviar el json
         HttpHeaders headers = new HttpHeaders();
+        //indico que voy a enviar un json
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
@@ -77,7 +90,9 @@ class BookControllerTest {
                     }
                 """;
 
+        //creamos la request (lo mismo que en postman pero con java)
         HttpEntity<String> request = new HttpEntity<>(json,headers);
+        //exchange -> se usa para POST y devuelve la entidad libro
         ResponseEntity<Book> response = testRestTemplate.exchange("/api/books", HttpMethod.POST, request, Book.class);
 
         Book result = response.getBody();
