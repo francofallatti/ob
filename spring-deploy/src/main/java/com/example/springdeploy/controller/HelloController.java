@@ -10,13 +10,13 @@ public class HelloController {
     @Value("${app.message}")
     String message;
 
-    @Value("${app.varexample}")
-    String varexample;
-    
+//    @Value("${app.varexample}")
+//    String varexample;
+//
     @GetMapping("/hola")
     public String helloWorld(){
         System.out.println(message);
-        System.out.println(varexample);
+       // System.out.println(varexample);
         return "holaa mundo";
     }
 
